@@ -9,8 +9,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 import static com.codeborne.selenide.Selenide.$$x;
 import static com.codeborne.selenide.Selenide.$x;
@@ -20,41 +19,44 @@ public class PhonePage {
     private final SelenideElement allProducts = $x("//div[@class='catalog']");
     private final ElementsCollection priceProducts = $$x("//span[contains(@class,'goods-tile__label') and contains(text(),\" Акция \")]/ancestor::div[@class='goods-tile ng-star-inserted']//span[@class='goods-tile__price-value']");
     private final ElementsCollection titleProducts = $$x("//span[contains(@class,'goods-tile__label') and contains(text(),\" Акция \")]/ancestor::div[@class='goods-tile ng-star-inserted']//span[@class='goods-tile__title']");
-    private final ElementsCollection pagination = $$x("//a[contains(@class,'pagination__link_state_active')]");
+    private final SelenideElement pagination = $x("//a[contains(@class,'button_color_gray')][2]");
+    private final ElementsCollection pricesOfProducts = $$x("//span[@class='goods-tile__price-value']");
+    Map<String, String> phoneList = new LinkedHashMap<>();
+    List<Integer> priceList = new ArrayList<>();
 
     @Step("Select sort high to low price")
-    public PhonePage selectHighToLowPrice () {
+    public PhonePage selectHighToLowPrice() {
         allProducts.shouldBe(Condition.visible);
         sortingField.selectOptionByValue("2: expensive");
+        initializationOfMap();
         return this;
     }
 
-    public PhonePage selectedPromotion() {
+    @Step("Fill collections by values")
+    public PhonePage initializationOfMap() {
 
-        Map<String, String> phoneList = new LinkedHashMap<>();
-        for (int i = 1; i < 4; i++) {
-//            if (i == 0) {
-//                addPhoneToMap(phoneList,titleProducts, priceProducts );
-//            }
-            addPhoneToMap(phoneList,titleProducts, priceProducts);
-            pagination.get(i).scrollIntoView(false).click();
-
+        for (int i = 1; i < 3; i++) {
+            if (i == 1) {
+                for (int j = 0; j < pricesOfProducts.size(); j++) {
+                    priceList.add(Integer.parseInt(pricesOfProducts.get(j).getText().replaceAll("\\s", "")));
+                }
+            }
+            addPhoneToMap(phoneList, titleProducts, priceProducts);
+            pagination.scrollIntoView(false).click();
         }
         return this;
     }
 
     @Step("Write title and price to file")
-    public PhonePage writeToFile(Map<String, String> titleOfMap, String pathToFile) {
+    public PhonePage writeProductsToFile() throws IOException {
 
-        File myFile = new File(pathToFile);
-        try {
-            BufferedWriter writer = new BufferedWriter(new FileWriter(myFile, true));
-            for (Map.Entry<String, String> entry : titleOfMap.entrySet())
-                writer.write(entry.getKey() + " --- " + entry.getValue() + "\r\n");
-            writer.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        File myFile = new File("C://autodoc//result.txt");
+
+        BufferedWriter writer = new BufferedWriter(new FileWriter(myFile, true));
+        for (Map.Entry<String, String> entry : phoneList.entrySet())
+            writer.write(entry.getKey() + " --- " + entry.getValue() + "\r\n");
+        writer.close();
+
         return this;
     }
 
@@ -65,12 +67,21 @@ public class PhonePage {
             }
         }
 
-        for (Map.Entry<String, String> ag : productOfMap.entrySet()) {
-            System.out.print( ag.getKey() + " - " +  ag.getValue()+ "\r\n");
-        }
-
         return productOfMap;
     }
 
+    public List<Integer> getExpectedSortedPrices(List<Integer> pricesList) {
+        List<Integer> expectedSortedPrices = new ArrayList<>(pricesList);
+        Collections.sort(expectedSortedPrices);
+        Collections.reverse(expectedSortedPrices);
+        return expectedSortedPrices;
+    }
+
+    @Step("Check prices sorting")
+    public boolean checkPricesSorting() {
+        boolean label = priceList.equals(getExpectedSortedPrices(priceList)) ? true : false;
+//      Assert.assertEquals(priceList, getExpectedSortedPrices(priceList));
+        return label;
+    }
 
 }
