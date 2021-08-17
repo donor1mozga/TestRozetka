@@ -15,6 +15,7 @@ public class RozetkaTest {
     public void checkSortingItems() {
         openPage(mainUrl);
         new MainPage().
-                choosePhoneTVElectronicsCategory();
+                choosePhoneTVElectronicsCategory().
+                choosePhoneList();
     }
 }
