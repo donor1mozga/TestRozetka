@@ -16,6 +16,10 @@ public class RozetkaTest {
         openPage(mainUrl);
         new MainPage().
                 choosePhoneTVElectronicsCategory().
-                choosePhoneList();
+                choosePhoneList().
+                selectHighToLowPrice().
+                selectedPromotion();
+
+
     }
 }
