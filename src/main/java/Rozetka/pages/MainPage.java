@@ -2,9 +2,9 @@ package Rozetka.pages;
 
 
 import com.codeborne.selenide.Condition;
-import com.codeborne.selenide.Condition.*;
+
 import com.codeborne.selenide.SelenideElement;
-import com.codeborne.selenide.conditions.*;
+
 import io.qameta.allure.Step;
 
 import static com.codeborne.selenide.Selenide.*;

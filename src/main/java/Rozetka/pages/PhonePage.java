@@ -35,7 +35,7 @@ public class PhonePage {
     @Step("Fill collections by values")
     public PhonePage initializationOfMap() {
 
-        for (int i = 1; i < 3; i++) {
+        for (int i = 1; i <=3; i++) {
             if (i == 1) {
                 for (int j = 0; j < pricesOfProducts.size(); j++) {
                     priceList.add(Integer.parseInt(pricesOfProducts.get(j).getText().replaceAll("\\s", "")));
@@ -60,7 +60,7 @@ public class PhonePage {
         return this;
     }
 
-    public Map<String, String> addPhoneToMap(Map<String, String> productOfMap, ElementsCollection NameProduct, ElementsCollection priceOfProduct) {
+    private Map<String, String> addPhoneToMap(Map<String, String> productOfMap, ElementsCollection NameProduct, ElementsCollection priceOfProduct) {
         if (NameProduct.size() > 0) {
             for (int j = 0; j < NameProduct.size(); j++) {
                 productOfMap.put(NameProduct.get(j).getText(), priceOfProduct.get(j).getText());
@@ -70,7 +70,7 @@ public class PhonePage {
         return productOfMap;
     }
 
-    public List<Integer> getExpectedSortedPrices(List<Integer> pricesList) {
+    private List<Integer> getExpectedSortedPrices(List<Integer> pricesList) {
         List<Integer> expectedSortedPrices = new ArrayList<>(pricesList);
         Collections.sort(expectedSortedPrices);
         Collections.reverse(expectedSortedPrices);
@@ -80,7 +80,7 @@ public class PhonePage {
     @Step("Check prices sorting")
     public boolean checkPricesSorting() {
         boolean label = priceList.equals(getExpectedSortedPrices(priceList)) ? true : false;
-//      Assert.assertEquals(priceList, getExpectedSortedPrices(priceList));
+
         return label;
     }
 
